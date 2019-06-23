@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   createStackNavigator,
   createAppContainer
@@ -5,6 +6,10 @@ import {
 import Home from './components/Home.js';
 import Profile from './components/Profile.js';
 import Feed from './components/Feed.js';
+import {createStore, applyMiddleware} from 'redux';
+import thunk from 'redux-thunk';
+import {Provider} from 'react-redux';
+import rootReducer from './reducers/index.js';
 
 
 const RootStack = createStackNavigator({
@@ -14,33 +19,16 @@ Profile: {
 Feed: Feed,
 });
 
-const App = createAppContainer(RootStack);
+const store = createStore(rootReducer, applyMiddleware(thunk))
 
-export default App;
+let Navigation = createAppContainer(RootStack);
 
-// class HomeScreen extends React.Component {
-//   render() {
-//     return (
-//       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//         <Text>Home!</Text>
-//       </View>
-//     );
-//   }
-// }
-
-// class SettingsScreen extends React.Component {
-//   render() {
-//     return (
-//       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//         <Text>Settings!</Text>
-//       </View>
-//     );
-//   }
-// }
-
-// const TabNavigator = createBottomTabNavigator({
-//   Home: { screen: HomeScreen },
-//   Settings: { screen: SettingsScreen },
-// });
-
-// export default createAppContainer(TabNavigator);
+export default class App extends React.Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <Navigation />
+      </Provider>
+    );
+  }
+}

@@ -37,7 +37,7 @@ export default class App extends React.Component {
     // Retrieve the redirect URL, add this to the callback URL list
     // of your Auth0 application.
     const redirectUrl = AuthSession.getRedirectUrl();
-    // console.log(`Redirect URL: ${redirectUrl}`);
+    console.log(`Redirect URL: ${redirectUrl}`);
     
     // Structure the auth parameters and URL
     const queryParams = toQueryString({
