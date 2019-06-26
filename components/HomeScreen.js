@@ -4,6 +4,8 @@ import { AuthSession } from 'expo';
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 
+import {addNewUser} from '../actions/index.js';
+
 import Feed from './Feed.js';
 
 /*
@@ -28,9 +30,9 @@ function toQueryString(params) {
     .join('&');
 }
 
-export default class App extends React.Component {
+class HomeScreen extends React.Component {
   state = {
-    token: null
+    authname: null
   };
 
   login = async () => {
@@ -66,53 +68,50 @@ handleResponse = (response) => {
     // Retrieve the JWT token and decode it
     const jwtToken = response.id_token;
     const decoded = jwtDecode(jwtToken);
-    console.log("jwt token:", decoded, decoded.nickname, decoded.name, decoded.picture)
+    console.log("jwt token:", decoded.sub, decoded.nickname, decoded.name, decoded.picture)
     const { name } = decoded;
-    AsyncStorage.setItem('response.id_token', JSON.stringify(response.id_token), () => {
-        this.setState({'token': response.id_token})
+    AsyncStorage.setItem('response.id_token', decoded.sub, () => {
+        this.setState({'authname': decoded.sub})
     });
     const data = {
-        username: decoded.sub,
+        authname: decoded.sub,
+        username: decoded.nickname,
         thumbnail: decoded.picture
     }
     axios.post('https://trip-split-deploy2.herokuapp.com/api/users/new-user', data)
         .then(res => {
-            console.log("Login Successful:", res);
+            console.log("Login Successful");
         })
-        .catch(err => console.log("Login Unsuccessful:", err));
+        .catch(err => console.log("User already exists, jwt added to state"));
   };
 
 componentDidMount() {
     AsyncStorage.getItem('response.id_token', (err, result) => {
-        this.setState({'token': result})
+        this.setState({'authname': result})
     })
     axios.get('https://trip-split-deploy2.herokuapp.com/')
         .then(res => {
-            console.log(res)
+            console.log("app loaded")
         })
         .catch(err => console.log("This is the server up endpoint, if it doesn't work check deployment"))
 }
 
-logout = () => {
-    AsyncStorage.removeItem('response.id_token', (err, result) => {
-        this.setState({'token': null})
-    })
-}
+
 
 
   render() {
+      console.log(this.state)
     return (
       <View style={styles.container}>
         {
-          this.state.token ? (
+          this.state.authname ? (
               <>
               <Feed navigation = {this.props.navigation}/> 
-              <Button title="Log out with Auth0" onPress={this.logout} />
+              
               </>
           ) : (
               <>
               <Button title="Log in with Auth0" onPress={this.login} />
-              {/* <Button title="Log out with Auth0" onPress={this.logout} /> */}
               </>
           )
         }
@@ -121,6 +120,8 @@ logout = () => {
     );
   }
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -135,3 +136,13 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
 });
+
+const mapStateToProps = state => {
+    return{
+      userTrips: state.userTrips, 
+      isAddingTrip: state.isAddingTrip
+    }
+  }
+
+export default connect(mapStateToProps, {addNewUser})(HomeScreen);
+// export default HomeScreen;

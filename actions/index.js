@@ -1,13 +1,5 @@
 import axios from 'axios'
 
-export const REGISTER_START = "REGISTER_START"
-export const REGISTER_SUCCESS = "REGISTER_SUCCESS"
-export const REGISTER_FAIL = "REGISTER_FAIL"
-
-export const LOGIN_START = "LOGIN_START"
-export const LOGIN_SUCCESS = "LOGIN_SUCCESS"
-export const LOGIN_FAIL = "LOGIN_FAIL"
-
 export const GET_TRIPS_START = "GET_TRIPS_START"
 export const GET_TRIPS_SUCCESS = "GET_TRIPS_SUCCESS"
 export const GET_TRIPS_FAIL = "GET_TRIPS_FAIL"
@@ -38,46 +30,16 @@ export const GET_EVENTS_START = "GET_EVENTS_START"
 export const GET_EVENTS_SUCCESS = "GET_EVENTS_SUCCESS"
 export const GET_EVENTS_FAIL = "GET_EVENTS_FAIL"
 
+export const ADD_NEW_USER_START = "ADD_NEW_USER_START"
+export const ADD_NEW_USER_SUCCESS = "ADD_NEW_USER_SUCCESS"
+export const ADD_NEW_USER_FAIL = "ADD_NEW_USER_FAIL"
+
+
 export const SEND_CURRENT_PARTICIPANT_SUCCESS = "SEND_CURRENT_PARTICIPANT_SUCCESS"
 
 const URL = 'https://trip-split-deploy2.herokuapp.com/'
 
-export const register = credentials => dispatch => {
-    dispatch({type: REGISTER_START })
-
-    return axios.post(`${URL}api/register`, credentials)
-    .then(res => dispatch({
-        
-        type: REGISTER_SUCCESS,
-        payload: res.data
-    }))
-    .catch(err => dispatch({
-        type: REGISTER_FAIL,
-        payload: err
-    }))
-}
-
-export const login = credentials => dispatch => {
-    dispatch({type: LOGIN_START});
-
-    return axios.post(`${URL}api/login`, credentials)
-    .then(res => dispatch({
-        type: LOGIN_SUCCESS,
-        payload: res.data
-    }))
-    .catch(err => dispatch({
-        type: LOGIN_FAIL,
-        payload: err
-    }))
-}
-
 export const getTrips = userId => dispatch => {
-    // console.log("Get trips from actions ran")
-    // console.log("Get trips from actions ran", axios.get(`http://localhost:5000/api/usertrips/${userId}`, {
-    //     headers: {
-    //         Authorization: localStorage.getItem('jwt')
-    //     }
-    // }))
     dispatch({type: GET_TRIPS_START});
 
     axios.get(`${URL}api/usertrips/${userId}`, {
@@ -98,8 +60,6 @@ export const getTrips = userId => dispatch => {
         payload: err
     }))
 }
-
-
 
 export const addTrip = (tripInfo, userId) => dispatch => {
     dispatch({type: ADD_TRIP_START});
@@ -214,6 +174,25 @@ export const getEvents = tripId => dispatch => {
             Authorization: localStorage.getItem('jwt')
         }
     })
+    .then(res => {
+        console.log("Events in action", res.data);
+         dispatch({
+            
+        type: GET_EVENTS_SUCCESS,
+        payload: res.data
+        })
+    })
+    .catch(err => dispatch({
+        type: GET_EVENTS_FAIL,
+        payload: err
+    }))
+}
+
+export const addNewUser = data => dispatch => {
+    console.log("addNewUser from actions ran")
+    dispatch({type: GET_EVENTS_START});
+
+    axios.get(`${URL}api/users/new-user`, data)
     .then(res => {
         console.log("Events in action", res.data);
          dispatch({

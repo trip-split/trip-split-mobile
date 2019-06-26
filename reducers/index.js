@@ -1,11 +1,11 @@
-import {REGISTER_START, REGISTER_SUCCESS, REGISTER_FAIL, 
-    LOGIN_START, LOGIN_SUCCESS, LOGIN_FAIL, 
+import {
     GET_TRIPS_START, GET_TRIPS_SUCCESS, GET_TRIPS_FAIL,
     ADD_TRIP_START, ADD_TRIP_SUCCESS, ADD_TRIP_FAIL,
     END_TRIP_START, END_TRIP_SUCCESS, END_TRIP_FAIL,
     ADD_NEW_PERSON_SUCCESS, ADD_NEW_PERSON_START, ADD_NEW_PERSON_FAIL, 
     VIEW_TRIP_PARTICIPANTS_START, VIEW_TRIP_PARTICIPANTS_SUCCESS, VIEW_TRIP_PARTICIPANTS_FAIL, 
-    SEND_CURRENT_PARTICIPANT_SUCCESS, ADD_NEW_EVENT_START, ADD_NEW_EVENT_SUCCESS, ADD_NEW_EVENT_FAIL, GET_EVENTS_START, GET_EVENTS_SUCCESS, GET_EVENTS_FAIL
+    SEND_CURRENT_PARTICIPANT_SUCCESS, ADD_NEW_EVENT_START, ADD_NEW_EVENT_SUCCESS, ADD_NEW_EVENT_FAIL, GET_EVENTS_START, GET_EVENTS_SUCCESS, GET_EVENTS_FAIL,
+    ADD_NEW_USER_START, ADD_NEW_USER_SUCCESS, ADD_NEW_USER_FAIL
 } from '../actions/index'
 
 const initialState = {
@@ -19,6 +19,7 @@ const initialState = {
     isFetchingTripParticipants: false,
     isAddingEvent: false,
     isFetchingEvents: false,
+    isFetchingUser: false,
     
     userTrips: [],
     currentTrip: [],
@@ -31,48 +32,6 @@ const initialState = {
 
 export const rootReducer = (state = initialState, action) => {
     switch(action.type) {
-            case REGISTER_START:
-            return {
-                ...state, 
-                isRegistering: true
-            }
-        case REGISTER_SUCCESS:
-            console.log("Register Success Payload: ", action.payload);
-            // localStorage.setItem("jwt", action.payload.token)
-            return {
-                ...state,
-                isRegistering: false
-            }
-        case REGISTER_FAIL:
-            console.log("Register Failure payload: ", action.payload)
-            return {
-                ...state,
-                isRegistering: false
-            }
-        case LOGIN_START:
-            return {
-                ...state,
-                isLoggingIn: true
-            }
-        case LOGIN_SUCCESS:
-            console.log("Login Success payload:", action.payload)
-            localStorage.setItem("jwt", action.payload.token)
-            localStorage.setItem("userId", action.payload.id)
-            return {
-                ...state,
-                isLoggingIn: false,
-                user: {
-                    name: action.payload.username,
-                    id: action.payload.id,
-                    thumbnail: action.payload.thumbnail
-                }
-            }
-        case LOGIN_FAIL:
-            console.log("Login fail payload: ", action.payload)
-            return {
-                ...state,
-                isLoggingIn: false
-            }
         case GET_TRIPS_START:
         console.log("Get trips started...")
             return {
@@ -216,6 +175,29 @@ export const rootReducer = (state = initialState, action) => {
             return{
                 ...state,
                 currentParticipant: action.payload.participant
+            }
+        case ADD_NEW_USER_START:
+            return{
+                ...state,
+                isFetchingUser: true
+            }
+        case ADD_NEW_USER_SUCCESS:
+            console.log("viewing users")
+            console.log(action.payload);
+            return {
+                ...state,
+                user: {
+                    authname: action.payload.authname,
+                    id: action.payload.id,
+                    username: action.payload.username,
+                    thumbnail: action.payload.thumbnail
+                },
+                isFetchingUser: false
+            }
+        case ADD_NEW_USER_FAIL:
+            return {
+                ...state,
+                isFetchingUser: false
             }
          default:
         return state;
