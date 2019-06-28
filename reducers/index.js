@@ -182,8 +182,8 @@ export const rootReducer = (state = initialState, action) => {
                 isFetchingUser: true
             }
         case ADD_NEW_USER_SUCCESS:
-            console.log("viewing users")
-            console.log(action.payload);
+            console.log("new user reducer ran")
+            console.log("add new user reducer success",action.payload);
             return {
                 ...state,
                 user: {
@@ -195,9 +195,17 @@ export const rootReducer = (state = initialState, action) => {
                 isFetchingUser: false
             }
         case ADD_NEW_USER_FAIL:
+            console.log("user probably already exists")
+            console.log("action payload adsfasd:", action.payload)
             return {
                 ...state,
-                isFetchingUser: false
+                user: {
+                    authname: action.payload.authname,
+                    id: action.payload.id,
+                    username: action.payload.username,
+                    thumbnail: action.payload.thumbnail
+                },
+                isFetchingUser: false,
             }
          default:
         return state;

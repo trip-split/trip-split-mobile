@@ -68,8 +68,6 @@ handleResponse = (response) => {
     // Retrieve the JWT token and decode it
     const jwtToken = response.id_token;
     const decoded = jwtDecode(jwtToken);
-    console.log("jwt token:", decoded.sub, decoded.nickname, decoded.name, decoded.picture)
-    const { name } = decoded;
     AsyncStorage.setItem('response.id_token', decoded.sub, () => {
         this.setState({'authname': decoded.sub})
     });
@@ -78,22 +76,19 @@ handleResponse = (response) => {
         username: decoded.nickname,
         thumbnail: decoded.picture
     }
-    axios.post('https://trip-split-deploy2.herokuapp.com/api/users/new-user', data)
-        .then(res => {
-            console.log("Login Successful");
-        })
-        .catch(err => console.log("User already exists, jwt added to state"));
+    this.props.addNewUser({data})
+    // axios.post('https://trip-split-deploy2.herokuapp.com/api/users/new-user', data)
+    //     .then(res => {
+    //         console.log("Login Successful");
+    //     })
+    //     .catch(err => console.log("User already exists, jwt added to state"));
+
   };
 
 componentDidMount() {
     AsyncStorage.getItem('response.id_token', (err, result) => {
         this.setState({'authname': result})
     })
-    axios.get('https://trip-split-deploy2.herokuapp.com/')
-        .then(res => {
-            console.log("app loaded")
-        })
-        .catch(err => console.log("This is the server up endpoint, if it doesn't work check deployment"))
 }
 
 
@@ -139,8 +134,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
     return{
-      userTrips: state.userTrips, 
-      isAddingTrip: state.isAddingTrip
+      isFetchingUser: state.isFetchingUser, 
     }
   }
 
