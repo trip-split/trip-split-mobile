@@ -4,6 +4,9 @@ import { AuthSession } from 'expo';
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 
+import {addNewUser} from '../actions/index.js';
+import { connect } from 'react-redux';
+
 import DashboardScreen from './DashboardScreen.js';
 import Home from './Home.js';
 
@@ -18,7 +21,7 @@ function toQueryString(params) {
       .join('&');
   }
 
-export default class WelcomeScreen extends Component {
+class WelcomeScreen extends Component {
     state = {
         authname: null
       };
@@ -56,8 +59,6 @@ export default class WelcomeScreen extends Component {
         // Retrieve the JWT token and decode it
         const jwtToken = response.id_token;
         const decoded = jwtDecode(jwtToken);
-        console.log("jwt token:", decoded.sub, decoded.nickname, decoded.name, decoded.picture)
-        const { name } = decoded;
         AsyncStorage.setItem('response.id_token', decoded.sub, () => {
             this.setState({'authname': decoded.sub})
         });
@@ -66,12 +67,9 @@ export default class WelcomeScreen extends Component {
             username: decoded.nickname,
             thumbnail: decoded.picture
         }
-        axios.post('https://trip-split-deploy2.herokuapp.com/api/users/new-user', data)
-            .then(res => {
-                console.log("Login Successful");
-            })
-            .catch(err => console.log("User already exists, jwt added to state"));
+        this.props.addNewUser({data})
       };
+    
 
     componentDidMount() {
         AsyncStorage.getItem('response.id_token', (err, result) => {
@@ -81,7 +79,7 @@ export default class WelcomeScreen extends Component {
 
 
     render() {
-        console.log(this.state)
+        // console.log("trying to find user state", this.props.user.username)
         return(
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
             {
@@ -98,3 +96,12 @@ export default class WelcomeScreen extends Component {
         )
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        isFetchingUser: state.isFetchingUser,
+        user: state.user
+    }
+}
+
+export default connect(mapStateToProps, {addNewUser})(WelcomeScreen);

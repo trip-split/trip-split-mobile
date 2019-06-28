@@ -190,19 +190,21 @@ export const getEvents = tripId => dispatch => {
 
 export const addNewUser = data => dispatch => {
     console.log("addNewUser from actions ran")
-    dispatch({type: GET_EVENTS_START});
+    dispatch({type: ADD_NEW_USER_START});
 
     axios.get(`${URL}api/users/new-user`, data)
     .then(res => {
         console.log("Events in action", res.data);
          dispatch({
-            
-        type: GET_EVENTS_SUCCESS,
+        type: ADD_NEW_USER_SUCCESS,
         payload: res.data
         })
     })
-    .catch(err => dispatch({
-        type: GET_EVENTS_FAIL,
+    .catch(err => {
+        console.log("ADD_NEW_USER action button fail clicked")
+        dispatch({
+        type: ADD_NEW_USER_FAIL,
         payload: err
-    }))
+        })
+    })
 }

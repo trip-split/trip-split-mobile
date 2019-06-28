@@ -60,7 +60,6 @@ class Logout extends React.Component<Props, State> {
   _closeDialog5 = () => this.setState({ visible5: false });
 
   render() {
-    console.log("class component", this.props)
     const {
       theme: {
         colors: { background },
