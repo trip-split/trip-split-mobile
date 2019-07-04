@@ -67,7 +67,7 @@ class WelcomeScreen extends Component {
             username: decoded.nickname,
             thumbnail: decoded.picture
         }
-        this.props.addNewUser({data})
+        return this.props.addNewUser({data})
       };
     
 
