@@ -4,7 +4,7 @@ import { AuthSession } from 'expo';
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 
-import {addNewUser} from '../actions/index.js';
+import {addNewUser, getAllUsers} from '../actions/index.js';
 import { connect } from 'react-redux';
 
 import DashboardScreen from './DashboardScreen.js';
@@ -23,7 +23,9 @@ function toQueryString(params) {
 
 class WelcomeScreen extends Component {
     state = {
-        authname: null
+        authname: null,
+        user: {},
+        users: []
       };
     
       login = async () => {
@@ -67,19 +69,24 @@ class WelcomeScreen extends Component {
             username: decoded.nickname,
             thumbnail: decoded.picture
         }
-        this.props.addNewUser({data})
+        return this.props.getAllUsers({data})
       };
-    
+   
 
-    componentDidMount() {
-        AsyncStorage.getItem('response.id_token', (err, result) => {
-            this.setState({'authname': result})
-        })
-    }
+    // componentDidMount() {
+    //     AsyncStorage.getItem('response.id_token', (err, result) => {
+    //         this.setState({'authname': result})
+    //     })
+    // }
+
+    // componentDidUpdate() {
+    //     this.props.getUserInfo
+    // }
 
 
     render() {
-        // console.log("trying to find user state", this.props.user.username)
+        console.log("async storage", this.state.authname)
+        console.log("users on state?", this.state.users)
         return(
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
             {
@@ -100,8 +107,10 @@ class WelcomeScreen extends Component {
 const mapStateToProps = state => {
     return {
         isFetchingUser: state.isFetchingUser,
-        user: state.user
+        user: state.user,
+        gotUsers: state.gotUsers,
+        users: state.users
     }
 }
 
-export default connect(mapStateToProps, {addNewUser})(WelcomeScreen);
+export default connect(mapStateToProps, {addNewUser, getAllUsers})(WelcomeScreen);
