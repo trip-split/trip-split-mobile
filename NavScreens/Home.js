@@ -1,12 +1,15 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View, Button, AsyncStorage } from 'react-native';
+import { Text, ScrollView, View, Button } from 'react-native';
 
 export default class Home extends Component {
     render() {
         return(
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <ScrollView scrollEventThrottle={16}>
                 <Button title='Go To New Trip' onPress={()=>this.props.navigation.navigate('NewTrip')}/>
-            </View>
+                {/* <View>
+
+                </View> */}
+            </ScrollView>
         )
     }
 }

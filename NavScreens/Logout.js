@@ -65,7 +65,7 @@ class Logout extends React.Component<Props, State> {
         colors: { background },
       },
     } = this.props;
-    const { visible1, visible2, visible3, visible4, visible5 } = this.state;
+    const { visible5 } = this.state;
     return (
       <View style={[styles.container, { backgroundColor: background }]}>
         <DialogWithCustomColors visible={visible5} close={this._closeDialog5} navigation={this.props.navigation}/>
