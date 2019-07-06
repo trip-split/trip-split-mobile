@@ -12,7 +12,7 @@ import Icon from '@expo/vector-icons/Ionicons';
 import {createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 import {Provider as StoreProvider} from 'react-redux';
-import rootReducer from './reducers/index.js';
+import combineReducers from './reducers/index.js';
 
 import axios from 'axios';
 
@@ -139,7 +139,7 @@ const AppSwitchNavigator = createSwitchNavigator({
   Dashboard:{screen:AppDrawerNavigator}
 })
 
-const store = createStore(rootReducer, applyMiddleware(thunk))
+const store = createStore(combineReducers, applyMiddleware(thunk))
 let AppContainer = createAppContainer(AppSwitchNavigator);
 
 

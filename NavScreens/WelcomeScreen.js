@@ -4,11 +4,8 @@ import { AuthSession } from 'expo';
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 
-import {addNewUser, getAllUsers} from '../actions/index.js';
+import {addNewUser, getAllUsers, getUserID} from '../actions/index.js';
 import { connect } from 'react-redux';
-
-import DashboardScreen from './DashboardScreen.js';
-import Home from './Home.js';
 
 const auth0ClientId = 'mvhaur04VjsVeHWrmNTyEtMxzbx5ATWj';
 const auth0Domain = 'https://tripsplit.auth0.com';
@@ -23,9 +20,7 @@ function toQueryString(params) {
 
 class WelcomeScreen extends Component {
     state = {
-        authname: null,
-        user: {},
-        users: []
+        authname: null
       };
     
       login = async () => {
@@ -69,24 +64,28 @@ class WelcomeScreen extends Component {
             username: decoded.nickname,
             thumbnail: decoded.picture
         }
-        return this.props.getAllUsers({data})
+        this.props.addNewUser(data)
+        // if(!this.state.authname){
+        //     this.props.getUserID(data.authname)
+        //     console.log("this shouldn't have run")
+        // }
       };
    
 
-    // componentDidMount() {
-    //     AsyncStorage.getItem('response.id_token', (err, result) => {
-    //         this.setState({'authname': result})
-    //     })
-    // }
-
-    // componentDidUpdate() {
-    //     this.props.getUserInfo
-    // }
+    componentDidMount() {
+        AsyncStorage.getItem('response.id_token', (err, result) => {
+            this.setState({'authname': result})
+        })
+    }
+    
+    componentDidUpdate() {
+        if(this.state.authname){
+            return this.props.getUserID(this.state.authname)
+        }
+    }
 
 
     render() {
-        console.log("async storage", this.state.authname)
-        console.log("users on state?", this.state.users)
         return(
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
             {
@@ -108,9 +107,8 @@ const mapStateToProps = state => {
     return {
         isFetchingUser: state.isFetchingUser,
         user: state.user,
-        gotUsers: state.gotUsers,
-        users: state.users
+        user_id: state.user_id
     }
 }
 
-export default connect(mapStateToProps, {addNewUser, getAllUsers})(WelcomeScreen);
+export default connect(mapStateToProps, {addNewUser, getAllUsers, getUserID})(WelcomeScreen);
